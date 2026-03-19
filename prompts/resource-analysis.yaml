@@ -1,0 +1,18 @@
+suite: resource-analysis
+scope: cloud
+tests:
+  - id: CLOUD-RES-001
+    family: resource-analysis
+    prompt: What are the biggest resource types in the last 6 months?
+    expected_check:
+      - should answer with resource types
+      - should not drift into instance types or services
+      - should respect the 6 month range
+
+  - id: CLOUD-RES-002
+    family: resource-analysis
+    prompt: Which instance types are costing us the most this month?
+    expected_check:
+      - should answer with instance types
+      - should not drift into resource types or providers
+      - should stay on this month

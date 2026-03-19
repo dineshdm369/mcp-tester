@@ -1,0 +1,26 @@
+suite: service-analysis
+scope: cloud
+tests:
+  - id: CLOUD-SVC-001
+    family: service-analysis
+    prompt: Where did most of our cloud money go last month?
+    expected_check:
+      - should answer with services if available
+      - should not silently switch to providers
+      - should stay on last month
+
+  - id: CLOUD-SVC-002
+    family: service-analysis
+    prompt: Show me the top 10 cloud services in the last 7 days.
+    expected_check:
+      - should preserve last 7 days
+      - should return services, not providers
+      - should avoid anonymous buckets
+
+  - id: CLOUD-SVC-003
+    family: service-analysis
+    prompt: Which services got more expensive from January to February?
+    expected_check:
+      - should compare January vs February
+      - should stay on services
+      - should avoid backend or debugging chatter

@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "mavvrik": {
+      "transport": "stdio",
+      "command": "python",
+      "args": ["/path/to/your/mcp_server.py"],
+      "env": {
+        "TENANT_ID": "your-tenant-id",
+        "API_KEY": "your-api-key"
+      }
+    }
+  }
+}

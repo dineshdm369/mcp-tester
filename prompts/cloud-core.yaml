@@ -1,0 +1,98 @@
+suite: cloud-core
+scope: cloud
+families:
+  - cost-overview
+  - service-analysis
+  - location-analysis
+  - resource-analysis
+  - variance-analysis
+tests:
+  - id: CLOUD-001
+    family: cost-overview
+    prompt: What did GCP end up costing us last month? Just the cloud bill — not total infra.
+    expected_check:
+      - should answer for GCP only
+      - should use last month correctly
+      - should stay cloud-only
+      - should avoid backend or debugging chatter
+
+  - id: CLOUD-002
+    family: cost-overview
+    prompt: Break last month's cloud spend down by provider.
+    expected_check:
+      - should return provider-level breakdown
+      - should not mix in non-provider categories
+      - should use last month correctly
+      - should avoid backend or debugging chatter
+
+  - id: CLOUD-003
+    family: service-analysis
+    prompt: Where did most of our cloud money go last month?
+    expected_check:
+      - should answer with services if service-level data is available
+      - should not silently switch to provider-level only
+      - should stay on last month
+      - should avoid backend or debugging chatter
+
+  - id: CLOUD-004
+    family: service-analysis
+    prompt: Show me the top 10 cloud services in the last 7 days.
+    expected_check:
+      - should preserve last 7 days
+      - should return services, not providers
+      - should avoid anonymous buckets
+      - should avoid backend or debugging chatter
+
+  - id: CLOUD-005
+    family: location-analysis
+    prompt: Which locations cost us the most last month?
+    expected_check:
+      - should answer with locations or regions
+      - should stay on last month
+      - should avoid switching to providers or services
+      - should avoid backend or debugging chatter
+
+  - id: CLOUD-006
+    family: resource-analysis
+    prompt: What are the biggest resource types in the last 6 months?
+    expected_check:
+      - should answer with resource types
+      - should not drift into instance types or services
+      - should respect the 6 month range
+      - should avoid backend or debugging chatter
+
+  - id: CLOUD-007
+    family: resource-analysis
+    prompt: Which instance types are costing us the most this month?
+    expected_check:
+      - should answer with instance types
+      - should stay on this month
+      - should not drift into resource types or providers
+      - should avoid backend or debugging chatter
+
+  - id: CLOUD-008
+    family: variance-analysis
+    prompt: What increased the most from January to February?
+    expected_check:
+      - should compare January vs February
+      - should identify the biggest increases clearly
+      - should keep the answer on cost variance
+      - should avoid backend or debugging chatter
+
+  - id: CLOUD-009
+    family: variance-analysis
+    prompt: Which services got more expensive from January to February?
+    expected_check:
+      - should return service-level changes
+      - should stay on January vs February
+      - should not drift into providers unless clearly labeled as fallback
+      - should avoid backend or debugging chatter
+
+  - id: CLOUD-010
+    family: cost-overview
+    prompt: How has our cloud spend moved over the last 3 months?
+    expected_check:
+      - should describe the 3 month trend
+      - should keep the correct time scope
+      - should not switch dimensions unnecessarily
+      - should avoid backend or debugging chatter

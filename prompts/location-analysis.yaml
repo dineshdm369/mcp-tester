@@ -1,0 +1,10 @@
+suite: location-analysis
+scope: cloud
+tests:
+  - id: CLOUD-LOC-001
+    family: location-analysis
+    prompt: Which locations cost us the most last month?
+    expected_check:
+      - should answer with locations or regions
+      - should stay on last month
+      - should avoid switching to providers or services

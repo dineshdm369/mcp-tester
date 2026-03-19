@@ -1,0 +1,26 @@
+[project]
+name = "mcp-tester"
+version = "0.1.0"
+description = "CLI-based MCP UAT runner for cloud cost prompts"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "anthropic>=0.60.0",
+  "mcp[cli]>=1.21.0",
+  "openai>=1.109.1",
+  "pyyaml>=6.0.2",
+  "python-dotenv>=1.0.1",
+]
+
+[project.optional-dependencies]
+api = [
+  "fastapi>=0.115.0",
+  "uvicorn[standard]>=0.34.0",
+]
+
+[project.scripts]
+mcp-tester = "tester:main"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"

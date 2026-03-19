@@ -1,0 +1,18 @@
+suite: variance-analysis
+scope: cloud
+tests:
+  - id: CLOUD-VAR-001
+    family: variance-analysis
+    prompt: What increased the most from January to February?
+    expected_check:
+      - should compare January vs February
+      - should identify the biggest increases clearly
+      - should keep the answer on cost variance
+
+  - id: CLOUD-VAR-002
+    family: variance-analysis
+    prompt: Which services got more expensive from January to February?
+    expected_check:
+      - should return service-level changes
+      - should stay on January vs February
+      - should not drift into providers unless clearly labeled as fallback
