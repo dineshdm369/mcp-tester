@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
-from .config import AppConfig, load_env, get_api_key
+from .config import AppConfig, get_api_key, load_env
 from .logger import suite_hash
 from .runner import run_suite
 
