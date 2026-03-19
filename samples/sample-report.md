@@ -1,23 +1,23 @@
 # Sample Report
 
-This is a real output from a `cloud-core` suite run. It shows what a typical results file looks like, including passing tests, failures with grader remarks, issue class labels, token usage, and tool call traces.
+This is a real output from a `cloud-core` suite run. It shows what a typical results file looks like, including passing tests, partial passes with issue class labels, failures, grader remarks, token usage, and tool call traces.
 
 | Field | Value |
 |---|---|
-| Run | run-094153 |
-| Date | 2026-03-19 |
+| Run | run-224453 |
+| Date | 2026-03-18 |
 | Suite | cloud-core (10 tests) |
 | Provider | openrouter / z-ai/glm-5 |
 | MCP server | mavvrik-mcp |
 | Temperature | 0.0 |
-| Result | 4 Pass · 0 Partial Pass · 6 Fail |
-| Duration | 09:41 → 09:54 (≈13 min) |
+| Result | 6 Pass · 2 Partial Pass · 2 Fail |
+| Duration | 22:44 → 22:59 (≈15 min) |
 
 ---
 
 ## CLOUD-001 — cost-overview
 
-**Suite:** cloud-core &nbsp;|&nbsp; **Provider:** openrouter / z-ai/glm-5-20260211 &nbsp;|&nbsp; **Date:** 2026-03-19 09:43:00
+**Date:** 2026-03-18 22:46:19
 
 ### Prompt
 
@@ -32,34 +32,34 @@ What did GCP end up costing us last month? Just the cloud bill — not total inf
 
 ### Actual Response
 
-Your GCP cloud bill for **February 2026** was **$27,749.25**.
+Your GCP cloud bill for last month (February 2026) was **$27,855.28**.
 
 ### Verdict: Pass
 
 **Remarks**
 
 - Correctly scoped to GCP only as requested
-- Provides a specific month (February 2026) for last month
-- Stays cloud-only, matching the 'just the cloud bill' constraint
-- Clean, direct response with no backend or debugging chatter
+- Properly identified last month (February 2026)
+- Stayed cloud-only, excluding broader infra costs
+- Clean response with no backend or debugging chatter
 
-**Token Usage:** input_tokens: 4981 · output_tokens: 110 · total_tokens: 5091
+**Token Usage:** input_tokens: 4983 · output_tokens: 122 · total_tokens: 5105
 
 **Tool Calls**
 
-- `Hello` &nbsp; `{"name": "user"}`
-- `introspect` &nbsp; `{"type_name": "Query"}`
-- `introspect` &nbsp; `{"type_name": "CostsOptionInput"}`
-- `introspect` &nbsp; `{"type_name": "FilterCost"}`
-- `introspect` &nbsp; `{"type_name": "Cost"}`
-- `validate` &nbsp; `{"operation": "query { costs( option: { fromDate: \"2026-02-01\" toDate: \"2026-03-01\" groupBy: \"provider_code\" ... } filter: { provider_code: [\"gcp\"] } ) { cost date groupName } }"}`
-- `execute` &nbsp; `{"query": "..."}`
+- `Hello` `{"name": "cloud-cost-agent"}`
+- `introspect` `{"type_name": "Query", "depth": 1}`
+- `introspect` `{"type_name": "FilterCost"}`
+- `introspect` `{"type_name": "CostsOptionInput"}`
+- `introspect` `{"type_name": "Cost"}`
+- `validate` `{"operation": "query { costs( option: { todayDate: \"2026-03-18\" fromDate: \"2026-02-01\" toDate: \"2026-03-01\" groupBy: \"provider_code\" ... } filter: { provider_code: [\"gcp\"] } ) { groupId groupName cost date } }"}`
+- `execute` `{"query": "..."}`
 
 ---
 
 ## CLOUD-002 — cost-overview
 
-**Suite:** cloud-core &nbsp;|&nbsp; **Provider:** openrouter / z-ai/glm-5-20260211 &nbsp;|&nbsp; **Date:** 2026-03-19 09:44:05
+**Date:** 2026-03-18 22:47:37
 
 ### Prompt
 
@@ -78,31 +78,42 @@ Here's your cloud spend for February 2026 broken down by provider:
 
 | Rank | Provider | Cost | % of Total |
 |------|----------|------|------------|
-| 1 | Google Cloud (GCP) | $27,749.25 | 91.2% |
+| 1 | GCP | $27,749.25 | 91.2% |
 | 2 | AWS | $1,659.92 | 5.5% |
 | 3 | Azure | $1,019.09 | 3.3% |
-| 4 | Oracle Cloud (OCI) | $2.12 | <0.1% |
+| 4 | OCI | $2.12 | 0.01% |
 
 **Total Cloud Spend: $30,430.38**
 
-Google Cloud dominates your cloud spend at over 91% of the total, with AWS and Azure making up most of the remainder. Oracle Cloud spend is minimal.
+GCP dominates your cloud spend at over 91% of the total, with AWS and Azure making up most of the remaining spend. OCI has minimal usage.
 
 ### Verdict: Pass
 
 **Remarks**
 
-- Returns clean provider-level breakdown with Google Cloud, AWS, Azure, and Oracle Cloud
-- No non-provider categories mixed in - stays focused on the requested dimension
-- Time window (February 2026) is clearly specified and labeled as last month
-- Output is polished with no backend debugging or internal implementation details exposed
+- Correctly breaks down spend by provider (GCP, AWS, Azure, OCI) with costs and percentages
+- No non-provider categories mixed in — stays strictly at provider dimension
+- Clearly specifies the time period (February 2026) and presents total spend
+- Clean response with no backend debugging or internal implementation details exposed
 
-**Token Usage:** input_tokens: 4818 · output_tokens: 264 · total_tokens: 5082
+**Token Usage:** input_tokens: 4828 · output_tokens: 271 · total_tokens: 5099
+
+**Tool Calls**
+
+- `Hello` `{"name": "cloud-cost-agent"}`
+- `introspect` `{"type_name": "Query", "depth": 1}`
+- `introspect` `{"type_name": "CostTopEntryOptionInput"}`
+- `introspect` `{"type_name": "FilterCost"}`
+- `introspect` `{"type_name": "CostTopEntriesResponse"}`
+- `introspect` `{"type_name": "CostTopEntry"}`
+- `validate` `{"operation": "query { costTopEntries( option: { category: \"provider_code\" limit: 10 month: \"2026-02-01\" ... } ) { topEntries { groupId groupName cost } total } }"}`
+- `execute` `{"query": "..."}`
 
 ---
 
 ## CLOUD-003 — service-analysis
 
-**Suite:** cloud-core &nbsp;|&nbsp; **Provider:** openrouter / z-ai/glm-5-20260211 &nbsp;|&nbsp; **Date:** 2026-03-19 09:45:11
+**Date:** 2026-03-18 22:49:23
 
 ### Prompt
 
@@ -117,44 +128,38 @@ Where did most of our cloud money go last month?
 
 ### Actual Response
 
-Last month (February 2026), your cloud spend totaled **$30,430.38**. Here's where it went:
+Model exceeded max_turns without a final answer.
 
-## By Cloud Provider
-1. **Google Cloud (GCP)** — $27,749.25 (91.2%)
-2. **AWS** — $1,659.92 (5.5%)
-3. **Azure** — $1,019.09 (3.3%)
-4. **OCI** — $2.12 (<0.1%)
-
-## Top Services
-1. **BigQuery** — $19,753.83 (65.0%)
-2. **BigQuery Reservation API** — $2,298.15 (7.6%)
-3. **Invoice** — $1,718.07 (5.7%)
-4. **Cloud Run** — $715.93 (2.4%)
-5. **Compute Engine** — $630.24 (2.1%)
-6. **Cloud Storage** — $366.02 (1.2%)
-7. **AWS Cost Explorer** — $357.38 (1.2%)
-8. **Secret Manager** — $348.96 (1.1%)
-9. **Cloud Run Functions** — $346.08 (1.1%)
-10. **Amazon EC2** — $345.26 (1.1%)
-
-**Key insight:** The vast majority of your cloud spend (91%) went to Google Cloud, with BigQuery alone accounting for two-thirds of your total cloud costs.
-
-### Verdict: Pass
+### Verdict: Fail
 
 **Remarks**
 
-- Correctly provides service-level breakdown with top 10 services, not just provider-level
-- Stays on the requested time window (last month / February 2026)
-- Clean response with no backend debugging or internal implementation details exposed
-- Key insight summarizes the finding appropriately for the user's question
+- No answer was provided — model exceeded max_turns without producing a response
+- User's question about cloud spending last month was completely unanswered
+- Output is unusable — no service, provider, or cost data was returned
 
-**Token Usage:** input_tokens: 5205 · output_tokens: 468 · total_tokens: 5673
+**Issue Classes:** non-answer
+
+**Token Usage:** input_tokens: 9645 · output_tokens: 108 · total_tokens: 9753
+
+**Tool Calls**
+
+- `Hello` `{"name": "cloud-cost-agent"}`
+- `introspect` `{"type_name": "Query", "depth": 1}`
+- `introspect` `{"type_name": "CostTopEntryOptionInput"}`
+- `introspect` `{"type_name": "FilterCost"}`
+- `introspect` `{"type_name": "CostTopEntriesResponse"}`
+- `introspect` `{"type_name": "CostTopEntry"}`
+- `introspect` `{"type_name": "GroupBy"}`
+- `validate` `{"operation": "query($filter: FilterCost, $option: Json!) { costTopEntries(...) { ... } }"}`
+- `execute` `{"query": "...", "variables": "{ \"filter\": { \"provider_code\": [...] }, \"option\": { \"category\": \"product_name\", \"month\": \"2026-02-01\", ... } }"}`
+- *(5 more validate/execute attempts before hitting max_turns)*
 
 ---
 
 ## CLOUD-004 — service-analysis
 
-**Suite:** cloud-core &nbsp;|&nbsp; **Provider:** openrouter / z-ai/glm-5-20260211 &nbsp;|&nbsp; **Date:** 2026-03-19 09:47:18
+**Date:** 2026-03-18 22:51:08
 
 ### Prompt
 
@@ -169,36 +174,55 @@ Show me the top 10 cloud services in the last 7 days.
 
 ### Actual Response
 
-Here are the top 10 cloud services by cost for the current month (March 2026):
+Here are the **top 10 cloud services** by cost over the last 7 days (March 11–18, 2026):
 
 | Rank | Service | Cost | % of Total |
 |------|---------|------|------------|
-| 1 | AWS Cost Explorer | $512.92 | 28.9% |
-| 2 | Amazon Elastic Compute Cloud | $229.15 | 12.9% |
-| 3 | Virtual Machines | $133.65 | 7.5% |
-| 4 | BigQuery | $96.87 | 5.5% |
-| 5 | Storage | $85.41 | 4.8% |
-| 6 | AmazonCloudWatch | $81.52 | 4.6% |
-| 7 | Amazon Virtual Private Cloud | $80.64 | 4.5% |
-| 8 | Azure Monitor | $72.77 | 4.1% |
-| 9 | API Management | $54.42 | 3.1% |
-| 10 | SaaS | $47.66 | 2.7% |
+| 1 | AWS Cost Explorer | $453.94 | 34.4% |
+| 2 | Amazon Elastic Compute Cloud | $223.26 | 16.9% |
+| 3 | Virtual Machines | $133.15 | 10.1% |
+| 4 | BigQuery | $96.66 | 7.3% |
+| 5 | Storage | $83.22 | 6.3% |
+| 6 | Amazon Virtual Private Cloud | $78.63 | 6.0% |
+| 7 | AmazonCloudWatch | $76.09 | 5.8% |
+| 8 | Azure Monitor | $72.77 | 5.5% |
+| 9 | API Management | $54.42 | 4.1% |
+| 10 | SaaS | $47.66 | 3.6% |
 
-**Total Cloud Spend: $1,774.12**
+**Total cloud spend:** $1,319.81
 
-### Verdict: Fail
+### Verdict: Partial Pass
 
 **Remarks**
 
-- No remarks returned.
+- Time window correctly preserved as last 7 days (March 11–18, 2026)
+- Returns services rather than providers, meeting that requirement
+- Contains anonymous buckets: 'Storage', 'API Management', and 'SaaS' are not specific service names
+- No backend debugging or internal implementation details exposed
+- Anonymous buckets reduce actionability of the cost breakdown
 
-**Token Usage:** input_tokens: 6094 · output_tokens: 480 · total_tokens: 6574
+**Issue Classes:** dimension drift
+
+**Token Usage:** input_tokens: 5798 · output_tokens: 496 · total_tokens: 6294
+
+**Tool Calls**
+
+- `Hello` `{"name": "cloud-cost-agent"}`
+- `introspect` `{"type_name": "Query", "depth": 1}`
+- `introspect` `{"type_name": "CostTopEntryOptionInput"}`
+- `introspect` `{"type_name": "FilterCost"}`
+- `introspect` `{"type_name": "CostTopEntriesResponse"}`
+- `introspect` `{"type_name": "CostTopEntry"}`
+- `introspect` `{"type_name": "GroupBy"}`
+- `introspect` `{"type_name": "CostsOptionInput"}`
+- `validate` `{"operation": "query TopCloudServices { costs( option: { fromDate: \"2026-03-11\" toDate: \"2026-03-18\" groupBy: \"product_name\" ... } ) { groupId groupName cost } }"}`
+- `execute` `{"query": "..."}`
 
 ---
 
 ## CLOUD-005 — location-analysis
 
-**Suite:** cloud-core &nbsp;|&nbsp; **Provider:** openrouter / z-ai/glm-5-20260211 &nbsp;|&nbsp; **Date:** 2026-03-19 09:48:27
+**Date:** 2026-03-18 22:52:28
 
 ### Prompt
 
@@ -217,34 +241,45 @@ Based on the cost data for February 2026, here are the locations that cost you t
 
 | Rank | Location | Provider | Cost | % of Total |
 |------|----------|----------|------|------------|
-| 1 | **us-central1 (Iowa)** | GCP | $31,266.36 | 43.2% |
-| 2 | **Americas (Multi-Region)** | GCP | $20,423.89 | 28.2% |
-| 3 | **US East (N. Virginia)** | AWS | $5,696.20 | 7.9% |
-| 4 | **Unknown/Unmapped Region** | GCP | $3,954.61 | 5.5% |
-| 5 | **East US** | Azure | $3,388.01 | 4.7% |
-| 6 | **US East (N. Virginia)** | AWS | $1,424.05 | 2.0% |
-| 7 | **UK South** | Azure | $82.01 | 0.1% |
-| 8 | **West US 2** | Azure | $18.46 | <0.1% |
-| 9 | **US West (Ohio)** | AWS | $24.47 | <0.1% |
-| 10 | **Datacenter** | VMware | $346.60 | 0.5% |
+| 1 | Iowa (us-central1) | GCP | $31,266.36 | 45.2% |
+| 2 | Americas (Multi-Region) | GCP | $20,423.89 | 29.5% |
+| 3 | US East (N. Virginia) | AWS | $5,696.20 | 8.2% |
+| 4 | Unmapped/Unknown | GCP | $3,954.61 | 5.7% |
+| 5 | East US | Azure | $3,388.01 | 4.9% |
+| 6 | Europe (Multi-Region) | GCP | $95.88 | 0.14% |
+| 7 | Datacenter | VMware | $346.60 | 0.50% |
+| 8 | Council Bluffs | Kubernetes | $171.50 | 0.25% |
+| 9 | UK South | Azure | $82.01 | 0.12% |
+| 10 | US West (N. California) | AWS | $39.83 | 0.06% |
 
-**Total Cloud Spend: $72,317.47**
+**Total Cloud Spend: $69,197.47** · GCP dominates at ~80% · Top 3 locations account for 83% of spend
 
-### Verdict: Fail
+### Verdict: Pass
 
 **Remarks**
 
-- No remarks returned.
+- Correctly answers with locations/regions as the primary dimension, ranked by cost
+- Time window (February 2026) aligns with 'last month' as requested
+- Provider column provides helpful context without switching the primary focus away from locations
+- Clean, user-facing output with no backend or debugging chatter exposed
 
-**Issue Classes:** taxonomy pollution (VMware "Datacenter" included in cloud location results)
+**Token Usage:** input_tokens: 8318 · output_tokens: 848 · total_tokens: 9166
 
-**Token Usage:** input_tokens: 8287 · output_tokens: 1015 · total_tokens: 9302
+**Tool Calls**
+
+- `Hello` `{"name": "Cloud Cost Assistant"}`
+- `introspect` `{"type_name": "Query"}`
+- `introspect` `{"type_name": "CostLocationOptionInput"}`
+- `introspect` `{"type_name": "FilterCost"}`
+- `introspect` `{"type_name": "CostLocation"}`
+- `validate` `{"operation": "query { costLocations( option: { month: \"2026-02-01\" options: [...] } ) { provider_code cost region_code region_name latitude longitude } }"}`
+- `execute` `{"query": "..."}`
 
 ---
 
 ## CLOUD-006 — resource-analysis
 
-**Suite:** cloud-core &nbsp;|&nbsp; **Provider:** openrouter / z-ai/glm-5-20260211 &nbsp;|&nbsp; **Date:** 2026-03-19 09:49:56
+**Date:** 2026-03-18 22:54:35
 
 ### Prompt
 
@@ -259,35 +294,53 @@ What are the biggest resource types in the last 6 months?
 
 ### Actual Response
 
-Based on your cloud cost data for **February 2026** (the most recent complete month), here are your biggest resource types by spend:
+Based on the last 6 months of data (October 2025 - March 2026), here are the biggest resource types by total spend:
 
-| Rank | Service/Product | Cost | % of Total |
-|------|-----------------|------|------------|
-| 1 | BigQuery | $19,753.83 | 64.0% |
-| 2 | BigQuery Reservation API | $2,298.15 | 7.4% |
-| 3 | Invoice | $1,718.07 | 5.6% |
-| 4 | Cloud Run | $715.93 | 2.3% |
-| 5 | Compute Engine | $630.24 | 2.0% |
+| Rank | Resource Type | Total Spend | % of Total |
+|------|---------------|-------------|------------|
+| 1 | c2-standard-8 (GCP Compute) | $1,239.89 | 25.3% |
+| 2 | e2-micro (GCP Compute) | $974.57 | 19.9% |
+| 3 | D2 v2/DS2 v2 (Azure VMs) | $834.46 | 17.1% |
+| 4 | g4dn.xlarge (AWS GPU Instance) | $273.73 | 5.6% |
+| 5 | t2.micro (AWS EC2) | $248.48 | 5.1% |
+| 6 | e2-medium (GCP Compute) | $228.21 | 4.7% |
+| 7 | t3.medium (AWS EC2) | $169.80 | 3.5% |
+| 8 | Standard vCPU Duration (Azure Container Instances) | $161.06 | 3.3% |
+| 9 | USE1-Fargate-vCPU-Hours:perCPU (AWS Fargate) | $157.74 | 3.2% |
+| 10 | B1MS (Azure VM) | $137.14 | 2.8% |
 
-*(20 rows total)*
+**Total spend across all resource types: $4,891.63**
 
-### Verdict: Fail
+### Verdict: Partial Pass
 
 **Remarks**
 
-- User requested 6 months of data; response only covers February 2026 (1 month)
-- User asked for resource types; response provided services/products instead (e.g., BigQuery, Cloud Run, EC2 are services, not resource types)
-- Column header explicitly labels the dimension as 'Service/Product', confirming dimension drift
+- Response lists instance types (c2-standard-8, e2-micro, g4dn.xlarge, t2.micro, etc.) instead of resource types
+- Resource types should be categories like 'Compute Instance', 'Virtual Machine', 'Storage Bucket', not specific machine sizes
+- Time window of 6 months (October 2025 - March 2026) is correctly respected
+- No backend debugging or internal implementation details exposed
 
-**Issue Classes:** time-window drift · dimension drift
+**Issue Classes:** dimension drift
 
-**Token Usage:** input_tokens: 5436 · output_tokens: 781 · total_tokens: 6217
+**Token Usage:** input_tokens: 11772 · output_tokens: 2990 · total_tokens: 14762
+
+**Tool Calls**
+
+- `Hello` `{"name": "Cloud Cost Analysis"}`
+- `introspect` `{"type_name": "Query", "depth": 1}`
+- `introspect` `{"type_name": "CostTopEntryOptionInput"}`
+- `introspect` `{"type_name": "FilterCost"}`
+- `introspect` `{"type_name": "CostTopEntriesResponse"}`
+- `introspect` `{"type_name": "CostTopEntry"}`
+- `introspect` `{"type_name": "GroupBy"}`
+- `execute` `{"query": "...", "variables": "{ \"option\": { \"category\": \"instance_type\", \"limit\": 50, \"month\": \"2025-10-01\", ... } }"}`
+- *(separate execute calls per month: Oct 2025 through Mar 2026)*
 
 ---
 
 ## CLOUD-007 — resource-analysis
 
-**Suite:** cloud-core &nbsp;|&nbsp; **Provider:** openrouter / z-ai/glm-5-20260211 &nbsp;|&nbsp; **Date:** 2026-03-19 09:51:05
+**Date:** 2026-03-18 22:55:04
 
 ### Prompt
 
@@ -302,31 +355,35 @@ Which instance types are costing us the most this month?
 
 ### Actual Response
 
-Here are the top instance types by cost for March 2026:
-
-| Rank | Instance Type | Cost | % of Total |
-|------|---------------|------|------------|
-| 1 | D2 v2/DS2 v2 | $120.68 | 51.7% |
-| 2 | t2.micro | $25.95 | 11.1% |
-| 3 | t3.medium | $17.50 | 7.5% |
-| 4 | Standard vCPU Duration | $15.63 | 6.7% |
-| 5 | db.t3.micro | $15.19 | 6.5% |
-
-*(10 rows total)*
+*(empty)*
 
 ### Verdict: Fail
 
 **Remarks**
 
-- No remarks returned.
+- No response was provided to the user's question
+- The question about instance type costs for this month was completely unanswered
+- Cannot evaluate dimension or time-window handling when no output exists
 
-**Token Usage:** input_tokens: 7967 · output_tokens: 543 · total_tokens: 8510
+**Issue Classes:** empty response
+
+**Token Usage:** input_tokens: 4488 · output_tokens: 0 · total_tokens: 4488
+
+**Tool Calls**
+
+- `Hello` `{"name": "Cloud Cost Assistant"}`
+- `introspect` `{"type_name": "Query", "depth": 1}`
+- `introspect` `{"type_name": "CostTopEntryOptionInput"}`
+- `introspect` `{"type_name": "FilterCost"}`
+- `introspect` `{"type_name": "CostTopEntriesResponse"}`
+- `introspect` `{"type_name": "CostTopEntry"}`
+- `introspect` `{"type_name": "GroupBy"}`
 
 ---
 
 ## CLOUD-008 — variance-analysis
 
-**Suite:** cloud-core &nbsp;|&nbsp; **Provider:** openrouter / z-ai/glm-5-20260211 &nbsp;|&nbsp; **Date:** 2026-03-19 09:51:31
+**Date:** 2026-03-18 22:56:39
 
 ### Prompt
 
@@ -341,29 +398,47 @@ What increased the most from January to February?
 
 ### Actual Response
 
-I'd be happy to help you identify what increased the most from January to February. To provide accurate insights, I need a few clarifications:
+Based on the cost variance analysis from January to February 2026, **BigQuery** had the largest cost increase.
 
-1. **Which year?** Are you referring to January to February of this year, or a specific year?
-2. **What dimension should I analyze?** (by service, account, provider, region, tags)
-3. **What cost type?** Gross cost, net cost, or amortized cost?
+| Service | January | February | Increase | % Change |
+|---------|---------|----------|----------|----------|
+| BigQuery | $19,317.89 | $19,753.83 | +$435.94 | +2.3% |
+| Cloud Storage | $207.57 | $366.02 | +$158.45 | +76.3% |
+| ReplicaSet | $4.76 | $131.15 | +$126.39 | +2,655% |
+| Cloud Logging | $132.06 | $224.74 | +$92.68 | +70.2% |
+| Cloud Monitoring | $51.38 | $97.93 | +$46.55 | +90.6% |
 
-### Verdict: Fail
+**BigQuery** leads with the highest absolute increase (+$435.94), though relatively modest at 2.3%. **ReplicaSet** showed the largest percentage increase (2,655%) — worth investigating.
+
+### Verdict: Pass
 
 **Remarks**
 
-- The response does not answer the question — it asks clarifying questions instead of providing any analysis
-- No comparison between January and February is performed
-- The system should use reasonable defaults rather than requiring full specification from the user
+- Correctly compares January vs February 2026 costs
+- Clearly identifies BigQuery as having the largest absolute increase ($435.94)
+- Provides helpful context distinguishing absolute vs percentage increases
+- Stays focused on cost variance without scope drift
+- Clean output with no backend or debugging chatter
 
-**Issue Classes:** non-answer
+**Token Usage:** input_tokens: 9226 · output_tokens: 445 · total_tokens: 9671
 
-**Token Usage:** input_tokens: 2587 · output_tokens: 272 · total_tokens: 2859
+**Tool Calls**
+
+- `Hello` `{"name": "Cost Analysis Assistant"}`
+- `introspect` `{"type_name": "Query", "depth": 1}`
+- `introspect` `{"type_name": "CostVarianceOptionInput"}`
+- `introspect` `{"type_name": "FilterCost"}`
+- `introspect` `{"type_name": "CostVariance"}`
+- `introspect` `{"type_name": "GroupBy"}`
+- `validate` `{"operation": "query CostVarianceQuery($option: Json!, $filter: FilterCost) { costVariances(...) { groupId groupName dateRange1 dateRange2 cost1 cost2 delta } }"}`
+- `execute` `{"query": "...", "variables": "{ \"option\": { \"fromDate\": \"2026-01-01\", \"toDate\": \"2026-02-01\", \"interval\": \"month\", \"variance\": \"increase\", \"groupBy\": \"product_name\", \"limit\": 20, ... } }"}`
+- *(2 additional execute attempts with alternate query shapes)*
 
 ---
 
 ## CLOUD-009 — variance-analysis
 
-**Suite:** cloud-core &nbsp;|&nbsp; **Provider:** openrouter / z-ai/glm-5 &nbsp;|&nbsp; **Date:** 2026-03-19 09:53:21
+**Date:** 2026-03-18 22:58:08
 
 ### Prompt
 
@@ -378,24 +453,53 @@ Which services got more expensive from January to February?
 
 ### Actual Response
 
-Model exceeded max_turns without a final answer.
+Here are the services that got more expensive from January to February 2026:
 
-### Verdict: Fail
+| Rank | Service | January | February | Increase | % Change |
+|------|---------|---------|----------|----------|----------|
+| 1 | BigQuery | $19,317.89 | $19,753.83 | $435.94 | +2.3% |
+| 2 | Cloud Storage | $207.57 | $366.02 | $158.45 | +76.3% |
+| 3 | ReplicaSet | $4.76 | $131.15 | $126.39 | +2,655% |
+| 4 | Cloud Logging | $132.06 | $224.74 | $92.68 | +70.2% |
+| 5 | Cloud Monitoring | $51.38 | $97.93 | $46.55 | +90.6% |
+| 6 | Networking | $289.81 | $333.77 | $43.96 | +15.2% |
+| 7 | Secret Manager | $310.66 | $348.96 | $38.30 | +12.3% |
+| 8 | Virtual Machines | $227.86 | $258.14 | $30.28 | +13.3% |
+| 9 | DaemonSet | $0.00 | $28.65 | $28.65 | New |
+| 10 | Purchase | $32.65 | $47.98 | $15.33 | +46.9% |
+
+**Total cost increase across these services: $1,086.27**
+
+ReplicaSet spiked 2,655% (from $4.76 to $131.15) — worth investigating. DaemonSet is a new service with no January spend.
+
+### Verdict: Pass
 
 **Remarks**
 
-- The model failed to provide an answer — max_turns (12) reached without completing
-- No data regarding service cost changes between January and February was presented
+- Correctly returns service-level cost changes comparing January to February
+- Maintains proper time window without drift to other periods
+- Stays at service dimension throughout — no provider-level drift
+- Clean, professional output with no backend or debugging chatter
+- Provides actionable insights and offers relevant follow-up
 
-**Issue Classes:** no answer · processing failure
+**Token Usage:** input_tokens: 6370 · output_tokens: 595 · total_tokens: 6965
 
-**Token Usage:** input_tokens: 7145 · output_tokens: 101 · total_tokens: 7246
+**Tool Calls**
+
+- `Hello` `{"name": "CostAnalysisBot", "timezone": "UTC"}`
+- `introspect` `{"type_name": "Query", "depth": 1}`
+- `introspect` `{"type_name": "CostVariance", "depth": 1}`
+- `introspect` `{"type_name": "CostVarianceOptionInput", "depth": 1}`
+- `introspect` `{"type_name": "FilterCost", "depth": 1}`
+- `validate` `{"operation": "query { costVariances( option: { groupBy: \"product_name\" interval: \"month\" variance: \"increase\" fromDate: \"2026-01-01\" toDate: \"2026-02-01\" ... } ) { groupId groupName dateRange1 dateRange2 cost1 cost2 delta } }"}`
+- `execute` `{"query": "..."}`
+- *(1 additional execute with alternate dateRanges format)*
 
 ---
 
 ## CLOUD-010 — cost-overview
 
-**Suite:** cloud-core &nbsp;|&nbsp; **Provider:** openrouter / z-ai/glm-5-20260211 &nbsp;|&nbsp; **Date:** 2026-03-19 09:54:50
+**Date:** 2026-03-18 22:59:21
 
 ### Prompt
 
@@ -410,33 +514,35 @@ How has our cloud spend moved over the last 3 months?
 
 ### Actual Response
 
-## Cloud Spend Trend - Last 3 Months
-
-Your cloud spend has **decreased significantly** over the last 3 months, dropping from **$63.8K** in December to **$30.4K** in February — a **52% reduction**.
-
-### Monthly Breakdown
+Your cloud spend has shown a significant downward trend over the last 3 months:
 
 | Month | Total Spend | Change |
 |-------|-------------|--------|
-| **December 2025** | $63,818 | — |
-| **January 2026** | $41,353 | ↓ $22,465 (-35%) |
-| **February 2026** | $30,430 | ↓ $10,923 (-26%) |
-| **March 2026** (MTD) | $1,774 | — |
+| December 2025 | $63,818 | — |
+| January 2026 | $41,353 | ↓ $22,465 (−35.2%) |
+| February 2026 | $29,430 | ↓ $11,923 (−28.8%) |
 
-### By Cloud Provider
+**Overall: −$34,388 (−53.9%) from December to February**
 
-**GCP** (dominant driver): Dec $61,142 → Jan $38,535 → Feb $27,749
-**AWS**: Dec $1,896 → Jan $1,819 → Feb $1,660
-**Azure**: Dec $778 → Jan $997 → Feb $1,019 (growing)
-**OCI**: ~$2/month consistently
+GCP drove 94% of the reduction (Dec $61,142 → Feb $27,749). AWS declined modestly (−12.4%). Azure grew slightly (Dec $778 → Feb $1,019, +31%).
 
 ### Verdict: Pass
 
 **Remarks**
 
-- Correctly describes a clear 3-month downward trend with specific figures (52% reduction)
-- Time scope is accurate — covers December through February, with March MTD appropriately labeled as supplementary
-- Provider breakdown is relevant and explains the trend driver (GCP accounts for 96% of spend)
-- Clean output with no backend debugging or internal implementation details exposed
+- Correctly describes a 3-month trend (December 2025 through February 2026) with clear downward movement
+- Maintains the requested time scope without drifting to different periods
+- Provides helpful provider breakdown as supporting context without switching the primary dimension
+- Clean, user-facing response with no backend debugging or implementation details exposed
 
-**Token Usage:** input_tokens: 5505 · output_tokens: 737 · total_tokens: 6242
+**Token Usage:** input_tokens: 5453 · output_tokens: 937 · total_tokens: 6390
+
+**Tool Calls**
+
+- `Hello` `{"name": "cloud-cost-analysis"}`
+- `introspect` `{"type_name": "Query", "depth": 1}`
+- `introspect` `{"type_name": "CostsOptionInput"}`
+- `introspect` `{"type_name": "FilterCost"}`
+- `introspect` `{"type_name": "Cost"}`
+- `validate` `{"operation": "query { costs( option: { todayDate: \"2026-03-18\" fromDate: \"2025-12-01\" toDate: \"2026-03-01\" groupBy: \"provider_code\" interval: \"month-1\" ... } ) { groupId groupName date cost } }"}`
+- `execute` `{"query": "..."}`
