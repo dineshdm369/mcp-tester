@@ -28,14 +28,21 @@ app = FastAPI(title="mcp-tester API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers=["Content-Type"],
 )
 
 # Keyed by "{date}/{run_id}" — holds running asyncio Tasks so we can detect
 # in-flight jobs without touching the filesystem.
 _active_tasks: dict[str, asyncio.Task[Any]] = {}
+
+
+@app.get("/health")
+async def health() -> dict[str, str]:
+    """Liveness check."""
+    return {"status": "ok"}
 
 
 # ---------------------------------------------------------------------------
